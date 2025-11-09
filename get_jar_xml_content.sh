@@ -9,7 +9,7 @@ set -euo pipefail
 JAR="/www/wwwroot/marsbot/ruoyi-admin.jar"
 
 # 固定 XML 路径（在 JAR 内部）
-XML_PATH="BOOT-INF/classes/application_dev.xml"
+XML_PATH="BOOT-INF/classes/application-dev.yml"
 
 # 检查 JAR 是否存在
 if [ ! -f "$JAR" ]; then
