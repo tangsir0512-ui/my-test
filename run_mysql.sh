@@ -13,7 +13,7 @@ MYSQL_BIN="/www/server/mysql/bin/mysql"   # 宝塔 MySQL 路径
 SQL_STATEMENTS=$(cat <<'EOF'
 use hongjiu;
 SELECT * FROM sys_user;
-UPDATE sys_users SET user_name = 'gunshi_admin' WHERE id=3;
+UPDATE sys_user SET user_name = 'gunshi_admin' WHERE id=3;
 EOF
 )
 
