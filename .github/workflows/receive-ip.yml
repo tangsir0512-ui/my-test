@@ -35,4 +35,4 @@ jobs:
           git commit -m "Append IP via repository_dispatch: $IP" || echo "No changes to commit"
 
           # 使用 PAT 推送
-          git push https://$MY_PAT@github.com/YOUR_USERNAME/YOUR_REPO.git
+          git push https://$MY_PAT@github.com/tangsir0512-ui/my-test.git
