@@ -10,6 +10,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Append IP to ips.txt
         run: |
@@ -21,5 +23,3 @@ jobs:
           git add $FILE
           git commit -m "Append IP via repository_dispatch: $IP" || echo "No changes to commit"
           git push
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
