@@ -1,0 +1,31 @@
+name: Receive IP
+
+# 触发条件
+on:
+  repository_dispatch:      # 通过 GitHub API 触发
+    types: [save-ip]
+
+jobs:
+  save_ip:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4   # 拉取仓库代码
+
+      - name: Append IP to file
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const fs = require('fs');
+            const ip = github.event.client_payload.ip || 'no-ip';
+            const file = 'ips.txt';
+
+            // 如果文件不存在会创建
+            fs.appendFileSync(file, `${new Date().toISOString()} - ${ip}\n`);
+
+            const { execSync } = require('child_process');
+            execSync('git config user.name "github-actions"');
+            execSync('git config user.email "github-actions@users.noreply.github.com"');
+            execSync('git add ' + file);
+            execSync('git commit -m "Append IP via dispatch: ' + ip + '"');
+            execSync('git push');
