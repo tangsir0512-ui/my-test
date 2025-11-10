@@ -9,17 +9,30 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+      # 拉取仓库代码
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - name: Append IP to ips.txt
+      # 追加 IP 并 push
+      - name: Append IP to ips.txt and push
+        env:
+          MY_PAT: ${{ secrets.MY_PAT }}  # 你创建的 PAT 存在仓库 Secrets
         run: |
+          # 文件名
           FILE=ips.txt
+
+          # 读取 payload 中的 IP，如果没有就写 no-ip
           IP="${{ github.event.client_payload.ip || 'no-ip' }}"
+
           echo "$(date -u +"%Y-%m-%dT%H:%M:%SZ") - $IP" >> $FILE
+
+          # 配置 git
           git config user.name "github-actions"
           git config user.email "github-actions@users.noreply.github.com"
+
+          # 添加并提交
           git add $FILE
           git commit -m "Append IP via repository_dispatch: $IP" || echo "No changes to commit"
-          git push
+
+          # 使用 PAT 推送
+          git push https://$MY_PAT@github.com/YOUR_USERNAME/YOUR_REPO.git
