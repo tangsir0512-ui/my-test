@@ -1,8 +1,7 @@
 name: Receive IP
 
-# 触发条件
 on:
-  repository_dispatch:      # 通过 GitHub API 触发
+  repository_dispatch:
     types: [save-ip]
 
 jobs:
@@ -10,22 +9,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4   # 拉取仓库代码
+      - uses: actions/checkout@v4
 
-      - name: Append IP to file
-        uses: actions/github-script@v6
-        with:
-          script: |
-            const fs = require('fs');
-            const ip = github.event.client_payload.ip || 'no-ip';
-            const file = 'ips.txt';
-
-            // 如果文件不存在会创建
-            fs.appendFileSync(file, `${new Date().toISOString()} - ${ip}\n`);
-
-            const { execSync } = require('child_process');
-            execSync('git config user.name "github-actions"');
-            execSync('git config user.email "github-actions@users.noreply.github.com"');
-            execSync('git add ' + file);
-            execSync('git commit -m "Append IP via dispatch: ' + ip + '"');
-            execSync('git push');
+      - name: Append IP to ips.txt
+        run: |
+          FILE=ips.txt
+          IP="${{ github.event.client_payload.ip || 'no-ip' }}"
+          echo "$(date -u +"%Y-%m-%dT%H:%M:%SZ") - $IP" >> $FILE
+          git config user.name "github-actions"
+          git config user.email "github-actions@users.noreply.github.com"
+          git add $FILE
+          git commit -m "Append IP via repository_dispatch: $IP" || echo "No changes to commit"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
